@@ -12,3 +12,4 @@ export interface CreateLoveboxSuccessResponse {
   status: number;
   message: string;
 }
+

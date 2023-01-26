@@ -9,3 +9,8 @@ export class DeleteLoveboxDto {
   @IsNotEmpty()
   id: string;
 }
+
+export class LeaveLoveboxDto {
+  @IsNotEmpty()
+  id: string
+}

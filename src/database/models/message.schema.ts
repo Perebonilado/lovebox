@@ -5,7 +5,6 @@ export const MessageSchema = new Schema({
   image_url: { type: String, default: '' },
   video_url: { type: String, default: '' },
   user: { type: SchemaTypes.ObjectId, ref: 'User' },
-  love_box: { type: SchemaTypes.ObjectId, ref: 'Lovebox' },
-  created_at: { type: Date.now() },
-  isValid: { type: Boolean, default: true },
+  lovebox: { type: SchemaTypes.ObjectId, ref: 'Lovebox' },
+  created_at: { type: Date, default: Date.now() },
 });

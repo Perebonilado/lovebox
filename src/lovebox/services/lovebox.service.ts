@@ -1,15 +1,21 @@
 import { Injectable, Inject, HttpStatus, HttpException } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CreateLoveboxSuccessResponse, Lovebox } from 'src/interfaces/lovebox';
-import { CreateLoveboxDto } from 'src/dto/lovebox.dto';
+import {
+  CreateLoveboxDto,
+  DeleteLoveboxDto,
+  LeaveLoveboxDto,
+} from 'src/dto/lovebox.dto';
 import { UserService } from 'src/user/services/user.service';
-import { DeleteLoveboxDto } from 'src/dto/lovebox.dto';
+import { GenericSuccess } from 'src/interfaces/common';
+import { NotificationService } from 'src/notification/services/notification.service';
 
 @Injectable()
 export class LoveboxService {
   constructor(
     @Inject('LOVEBOX_MODEL') private loveBoxModel: Model<Lovebox>,
     private userService: UserService,
+    private notificationService: NotificationService
   ) {}
 
   public async createLoveBox(
@@ -21,6 +27,7 @@ export class LoveboxService {
       const loveBox = new this.loveBoxModel({
         title: title,
         created_by: user_id,
+        members: [user_id]
       });
       await loveBox.save();
       await this.userService.addLoveboxToUser({
@@ -57,5 +64,18 @@ export class LoveboxService {
 
   public async findOneById(lovebox_id: string) {
     return await this.loveBoxModel.findById(lovebox_id);
+  }
+
+  public async leaveLovebox(
+    payload: LeaveLoveboxDto,
+    user_id: string,
+  ): Promise<GenericSuccess> {
+    const lovebox = await this.loveBoxModel.findById(payload.id);
+    lovebox.updateOne({ $pull: { members: user_id } });
+    await lovebox.save();
+    return {
+      message: 'You have succesfully left this lovebox',
+      status: HttpStatus.OK,
+    };
   }
 }

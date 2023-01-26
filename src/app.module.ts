@@ -8,6 +8,7 @@ import { EncryptionModule } from './encryption/encryption.module';
 import { LoveboxModule } from './lovebox/lovebox.module';
 import { InviteModule } from './invite/invite.module';
 import { NotificationModule } from './notification/notification.module';
+import { MessageModule } from './message/message.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { NotificationModule } from './notification/notification.module';
     LoveboxModule,
     InviteModule,
     NotificationModule,
+    MessageModule,
     ConfigModule.forRoot({ isGlobal: true }),
   ],
 })

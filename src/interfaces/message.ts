@@ -7,5 +7,4 @@ export interface Message extends Document {
   readonly user: string;
   readonly love_box: string;
   readonly created_at: Date;
-  readonly isValid: boolean;
 }

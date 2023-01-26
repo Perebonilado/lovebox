@@ -12,6 +12,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAccessToken } from 'src/constants';
 import { AuthService } from 'src/auth/services/auth.service';
 import { JwtStrategy } from 'src/auth/services/jwt.strategy';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { JwtStrategy } from 'src/auth/services/jwt.strategy';
     JwtModule.register({
       secret: JwtAccessToken,
     }),
+    NotificationModule
   ],
   providers: [
     LoveboxService,
