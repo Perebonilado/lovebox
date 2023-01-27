@@ -9,13 +9,14 @@ import {
 import { UserService } from 'src/user/services/user.service';
 import { GenericSuccess } from 'src/interfaces/common';
 import { NotificationService } from 'src/notification/services/notification.service';
+import { GetUserLoveBoxesResponse } from 'src/interfaces/lovebox';
 
 @Injectable()
 export class LoveboxService {
   constructor(
     @Inject('LOVEBOX_MODEL') private loveBoxModel: Model<Lovebox>,
     private userService: UserService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {}
 
   public async createLoveBox(
@@ -27,7 +28,7 @@ export class LoveboxService {
       const loveBox = new this.loveBoxModel({
         title: title,
         created_by: user_id,
-        members: [user_id]
+        members: [user_id],
       });
       await loveBox.save();
       await this.userService.addLoveboxToUser({
@@ -77,5 +78,23 @@ export class LoveboxService {
       message: 'You have succesfully left this lovebox',
       status: HttpStatus.OK,
     };
+  }
+
+  public async getUserLoveboxes(
+    user_id: string,
+  ): Promise<GetUserLoveBoxesResponse> {
+    try {
+      const loveboxes = await this.loveBoxModel.find(
+        { members: user_id, isDeleted: false },
+        '_id title members',
+      ).populate("members", "_id username");
+      return {
+        message: 'Successful',
+        status: HttpStatus.OK,
+        data: loveboxes,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

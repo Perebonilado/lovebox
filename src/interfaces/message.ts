@@ -5,6 +5,6 @@ export interface Message extends Document {
   readonly image_url?: string;
   readonly video_url?: string;
   readonly user: string;
-  readonly love_box: string;
+  readonly lovebox: string;
   readonly created_at: Date;
 }

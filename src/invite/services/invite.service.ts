@@ -68,7 +68,6 @@ export class InviteService {
   ): Promise<GenericSuccess> {
     try {
       const invite = await this.inviteModel.findById(invite_id);
-
       if (invite.to.toString() === user_id) {
         await invite.updateOne({
           $set: { is_accepted: true },

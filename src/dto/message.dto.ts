@@ -11,3 +11,8 @@ export class SendMessageToLoveboxDto {
 
   video_url: string;
 }
+
+export class FindMessagesByLoveboxDto {
+  @IsNotEmpty()
+  lovebox: string;
+}

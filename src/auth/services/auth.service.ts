@@ -26,9 +26,10 @@ export class AuthService {
         );
       else {
         const { email, _id: sub } = await this.userService.create(body);
+        const user = {email, sub}
         return {
           message: 'Successful',
-          token: this.jwtService.sign({ email, sub }),
+          token: this.jwtService.sign({ user }),
         };
       }
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Controller, Post, Req, UseGuards, Body, Put } from '@nestjs/common';
+import { Controller, Post, Req, UseGuards, Body, Put, Get } from '@nestjs/common';
 import { Request } from 'express';
 import { LoveboxService } from '../services/lovebox.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -26,5 +26,14 @@ export class LoveboxController {
   ) {
     const { sub }: any = req.user;
     return await this.loveBoxService.deleteLovebox({ id: body.id }, sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('retrieve')
+  public async retrieveLoveBox(
+    @Req() req: Request,
+  ) {
+    const { sub }: any = req.user;
+    return await this.loveBoxService.getUserLoveboxes(sub)
   }
 }

@@ -1,6 +1,9 @@
 import { Injectable, Inject, HttpException, HttpStatus } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { SendMessageToLoveboxDto } from 'src/dto/message.dto';
+import {
+  FindMessagesByLoveboxDto,
+  SendMessageToLoveboxDto,
+} from 'src/dto/message.dto';
 import { GenericSuccess } from 'src/interfaces/common';
 import { Message } from 'src/interfaces/message';
 import { LoveboxService } from 'src/lovebox/services/lovebox.service';
@@ -31,6 +34,21 @@ export class MessageService {
           status: HttpStatus.OK,
         };
       }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  public async findMessagesByLovebox(query: FindMessagesByLoveboxDto) {
+    try {
+      const messages = await this.messageModel
+        .find({ lovebox: query.lovebox })
+        .populate('user', 'username _id');
+      return {
+        message: 'successful',
+        status: HttpStatus.OK,
+        data: messages,
+      };
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

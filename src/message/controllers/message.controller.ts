@@ -1,7 +1,18 @@
-import { Controller, Post, UseGuards, Req, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseGuards,
+  Req,
+  Body,
+  Get,
+  Query,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { SendMessageToLoveboxDto } from 'src/dto/message.dto';
+import {
+  FindMessagesByLoveboxDto,
+  SendMessageToLoveboxDto,
+} from 'src/dto/message.dto';
 import { MessageService } from '../services/message.service';
 
 @Controller('message')
@@ -16,5 +27,11 @@ export class MessageController {
   ) {
     const { sub }: any = req.user;
     return await this.messageService.sendMessageToLovebox(body, sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('retrieve')
+  public async getMessagesByLoveBox(@Query() query: FindMessagesByLoveboxDto) {
+    return await this.messageService.findMessagesByLovebox(query);
   }
 }
