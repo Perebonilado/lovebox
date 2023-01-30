@@ -21,9 +21,9 @@ export class MessageService {
   ): Promise<GenericSuccess> {
     try {
       const lovebox = await this.loveboxService.findOneById(payload.lovebox);
-      if (!lovebox.members.includes(user_id))
+      if (lovebox.created_by.toString() !== user_id)
         throw new HttpException(
-          'You cannot send a message to a lovebox you dont belong to',
+          'You cannot send a message to a lovebox you did not create',
           HttpStatus.UNAUTHORIZED,
         );
       else {
@@ -39,16 +39,26 @@ export class MessageService {
     }
   }
 
-  public async findMessagesByLovebox(query: FindMessagesByLoveboxDto) {
+  public async findMessagesByLovebox(query: FindMessagesByLoveboxDto, user_id) {
     try {
-      const messages = await this.messageModel
-        .find({ lovebox: query.lovebox })
-        .populate('user', 'username _id');
-      return {
-        message: 'successful',
-        status: HttpStatus.OK,
-        data: messages,
-      };
+      const userInLovebox = await this.loveboxService.checkUserInLovebox({
+        lovebox_id: query.lovebox,
+        user_id: user_id,
+      });
+      if (userInLovebox) {
+        const messages = await this.messageModel
+          .find({ lovebox: query.lovebox })
+          .populate('user', 'username _id');
+        return {
+          message: 'successful',
+          status: HttpStatus.OK,
+          data: messages,
+        };
+      }
+      throw new HttpException(
+        'You cannot retrieve messages for a lovebox you don\'t belong to',
+        HttpStatus.UNAUTHORIZED,
+      );
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

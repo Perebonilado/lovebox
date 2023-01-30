@@ -28,3 +28,8 @@ export interface GetUserLoveBoxesResponse extends GenericSuccess {
     never
   >[];
 }
+
+export interface CheckUserInLovebox {
+  lovebox_id: string;
+  user_id: string;
+}

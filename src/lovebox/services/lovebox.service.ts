@@ -9,7 +9,10 @@ import {
 import { UserService } from 'src/user/services/user.service';
 import { GenericSuccess } from 'src/interfaces/common';
 import { NotificationService } from 'src/notification/services/notification.service';
-import { GetUserLoveBoxesResponse } from 'src/interfaces/lovebox';
+import {
+  GetUserLoveBoxesResponse,
+  CheckUserInLovebox,
+} from 'src/interfaces/lovebox';
 
 @Injectable()
 export class LoveboxService {
@@ -84,15 +87,29 @@ export class LoveboxService {
     user_id: string,
   ): Promise<GetUserLoveBoxesResponse> {
     try {
-      const loveboxes = await this.loveBoxModel.find(
-        { members: user_id, isDeleted: false },
-        '_id title members',
-      ).populate("members", "_id username");
+      const loveboxes = await this.loveBoxModel
+        .find({ members: user_id, isDeleted: false }, '_id title members')
+        .populate('members', '_id username');
       return {
         message: 'Successful',
         status: HttpStatus.OK,
         data: loveboxes,
       };
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  public async checkUserInLovebox(args: CheckUserInLovebox): Promise<boolean> {
+    try {
+      const lovebox = await this.loveBoxModel.find({
+        _id: args.lovebox_id,
+        members: args.user_id,
+      });
+      if (lovebox.length) {
+        return true;
+      }
+      return false;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

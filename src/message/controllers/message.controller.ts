@@ -31,7 +31,11 @@ export class MessageController {
 
   @UseGuards(JwtAuthGuard)
   @Get('retrieve')
-  public async getMessagesByLoveBox(@Query() query: FindMessagesByLoveboxDto) {
-    return await this.messageService.findMessagesByLovebox(query);
+  public async getMessagesByLoveBox(
+    @Query() query: FindMessagesByLoveboxDto,
+    @Req() req: Request,
+  ) {
+    const { sub }: any = req.user;
+    return await this.messageService.findMessagesByLovebox(query, sub);
   }
 }
